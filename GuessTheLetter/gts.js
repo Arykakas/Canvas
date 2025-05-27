@@ -1,11 +1,18 @@
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d')
 
-// function resizeCanvas() {
-//     canvas.width = window.innerWidth;
-//     canvas.height = window.innerHeight;
-//     initGame()
-// }
+function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0); 
+      ctx.scale(dpr, dpr);
+
+      drawScreen(); // Redraw content
+    }
 
 // window.addEventListener('resize', resizeCanvas);
 // localStorage.clear();
@@ -69,6 +76,8 @@ function initGame() {
 }
 
 function drawScreen() {
+    const { width, height } = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = "#ffffaa";
     ctx.fillRect(0,0,500,300);
     ctx.strokeStyle = "#000000";
@@ -77,16 +86,16 @@ function drawScreen() {
 
     // Date
     ctx.fillStyle = "#000000";
-    ctx.font = "10px Sans-Serif";
-    ctx.fillText(today, 150, 10);
+    ctx.font = "14px Sans-Serif";
+    ctx.fillText(today, 80, 10);
 
     // Message
     ctx.fillStyle = "#FFOOOO";
     ctx.font = "10px Sans-Serif";
     ctx.fillText(message, 125, 30);
     ctx.fillStyle = "#109910";
-    ctx.font = "16px Sans-Serif";
-    ctx.fillText('Guesses: '+ guesses, 215, 50);
+    ctx.font = "24px Sans-Serif";
+    ctx.fillText('Guesses: '+ guesses, 188, 50);
 
     //Higher Or Lower
     ctx.fillStyle = "#000000";
@@ -102,9 +111,10 @@ function drawScreen() {
     ctx.fillStyle = "#FF0000";
     ctx.font = "10px Sans-Serif";
     var oldPb = localStorage.getItem("PB")
-    console.log(oldPb)
     if(!!oldPb) {
-        ctx.fillText("Personal Best: "+ localStorage.getItem("PB") ?? 'N/A', 355, 30);
+        ctx.fillText("Personal Best: "+ localStorage.getItem("PB"), 355, 30);
+    }else {
+        ctx.fillText("Personal Best: "+ 'N/A', 355, 30);
     }
     if(gameOver){
         ctx.fillStyle = "#FF0000";
