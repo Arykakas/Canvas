@@ -2,17 +2,17 @@ var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d')
 
 function resizeCanvas() {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
 
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
+    canvas.width = rect.width * dpr;
+    canvas.height = (rect.height * dpr);
 
-      ctx.setTransform(1, 0, 0, 1, 0, 0); 
-      ctx.scale(dpr, dpr);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
 
-      drawScreen(); // Redraw content
-    }
+    drawScreen(); // Redraw content
+}
 
 // window.addEventListener('resize', resizeCanvas);
 // localStorage.clear();
@@ -20,7 +20,7 @@ function resizeCanvas() {
 var guesses = 0;
 var message = "Guess The Letter From a (lower) to z (higher)";
 var letters = [
-    "a","b","c","d","e","f","g","h","i","j","k","l","m", "n", "o",
+    "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
     "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
 ];
 
@@ -33,20 +33,31 @@ var gameOver = false;
 var letterIndex = Math.floor(Math.random() * letters.length);
 letterToGuess = letters[letterIndex];
 
+var exportImageButton = document.getElementById('createImageButton')
+exportImageButton.addEventListener('click', createImageDataPressed);
+
+function createImageDataPressed(e) {
+
+    const dataURL = canvas.toDataURL("image/png");
+    const imageWindow = window.open("", "canvasImage", `left=0,top=0,width=${canvas.width},height=${canvas.height},toolbar=0,resizable=0`);
+    imageWindow.document.write(`<html><head><title>Canvas Image</title></head><body style="margin:0;"><img src="${dataURL}" style="width:100%; height:auto; display:block;"></body></html>`);
+
+}
+
 window.addEventListener("keydown", eventKeyPressed, false);
 
 function eventKeyPressed(e) {
-    if(!gameOver) {
+    if (!gameOver) {
         var letterPressed = String.fromCharCode(e.keyCode).toLowerCase();
         guesses++;
         lettersGuessed.push(letterPressed);
-        if(letterPressed == letterToGuess){
+        if (letterPressed == letterToGuess) {
             gameOver = true
         }
         else {
             letterIndex = letters.indexOf(letterToGuess);
             guessIndex = letters.indexOf(letterPressed);
-            if(guessIndex < 0) {
+            if (guessIndex < 0) {
                 higherOrLower = "That is not a letter";
             } else if (guessIndex > letterIndex) {
                 higherOrLower = "Lower"
@@ -56,9 +67,9 @@ function eventKeyPressed(e) {
         }
         drawScreen();
     }
-    else if(gameOver) {
+    else if (gameOver) {
         var oldPb = localStorage.getItem("PB")
-        if(oldPb > guesses || oldPb == null) {
+        if (oldPb > guesses || oldPb == null) {
             localStorage.setItem("PB", guesses)
         }
         initGame();
@@ -79,7 +90,7 @@ function drawScreen() {
     const { width, height } = canvas.getBoundingClientRect();
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = "#ffffaa";
-    ctx.fillRect(0,0,500,300);
+    ctx.fillRect(0, 0, 500, 300);
     ctx.strokeStyle = "#000000";
     ctx.strokeRect(5, 5, 490, 290);
     ctx.textBaseline = "top";
@@ -95,36 +106,36 @@ function drawScreen() {
     ctx.fillText(message, 125, 30);
     ctx.fillStyle = "#109910";
     ctx.font = "24px Sans-Serif";
-    ctx.fillText('Guesses: '+ guesses, 188, 50);
+    ctx.fillText('Guesses: ' + guesses, 188, 50);
 
     //Higher Or Lower
     ctx.fillStyle = "#000000";
     ctx.font = "16px Sans-Serif";
-    ctx.fillText("Higher Or Lower: "+higherOrLower, 150,125)
+    ctx.fillText("Higher Or Lower: " + higherOrLower, 150, 125)
 
     //Letters Guessed
     ctx.fillStyle = "#FF0000";
     ctx.font = "16px Sans-Serif";
-    ctx.fillText("Letters Guessed: "+ lettersGuessed.toString(), 10, 260);
+    ctx.fillText("Letters Guessed: " + lettersGuessed.toString(), 10, 260);
 
     //Personal Best
     ctx.fillStyle = "#FF0000";
     ctx.font = "10px Sans-Serif";
     var oldPb = localStorage.getItem("PB")
-    if(!!oldPb) {
-        ctx.fillText("Personal Best: "+ localStorage.getItem("PB"), 355, 30);
-    }else {
-        ctx.fillText("Personal Best: "+ 'N/A', 355, 30);
+    if (!!oldPb) {
+        ctx.fillText("Personal Best: " + localStorage.getItem("PB"), 355, 30);
+    } else {
+        ctx.fillText("Personal Best: " + 'N/A', 355, 30);
     }
-    if(gameOver){
+    if (gameOver) {
         ctx.fillStyle = "#FF0000";
         ctx.font = "40px Sans-Serif";
         ctx.fillText("You Got It!", 150, 180);
         ctx.fillStyle = "#109910";
         ctx.font = "20px Sans-Serif";
         ctx.fillText("Press any key to restart", 144, 220);
-        
-    } 
+
+    }
 }
 
 initGame();
